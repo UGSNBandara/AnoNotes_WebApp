@@ -1,4 +1,4 @@
-# AnoNotes
+# AnoNotes - WebApp
 
 **AnoNotes** is a fun and simple web app where users can create a link, share it with their friends, and receive anonymous messages, funny notes, or feedback. The user can view all the responses received through the shared link.
 
