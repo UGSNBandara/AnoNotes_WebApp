@@ -3,10 +3,11 @@ import mongoose from "mongoose";
 const aMassageSchema = mongoose.Schema(
     {
         targetUser : {
-            type: String,
+            type: mongoose.Schema.Types.ObjectId,
+            ref : 'User',
             required: true,
         },
-        massage : {
+        message : {
             type: String,
             required: true,
         },
@@ -14,6 +15,10 @@ const aMassageSchema = mongoose.Schema(
             type : String,
             required : false,
         },
+        commenterIP : {
+            type : String,
+            required : true,
+        }
     }
 );
 
