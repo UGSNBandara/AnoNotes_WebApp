@@ -11,10 +11,9 @@ export const addMessage = async (request, response) => {
             });
         }
 
-        const newmessage = await massage.create({
+        const newmessage = await massages.create({
             targetUser,
             message,
-            nickname,
             nickname,
             commenterIP,
         })

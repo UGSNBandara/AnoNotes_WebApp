@@ -2,6 +2,7 @@ import express, { request, response } from "express";
 import { PORT, MONGOURL } from "./config.js";
 import mongoose from "mongoose";
 import userRoutes from "./routes/userRoutes.js";
+import massageRoutes from "./routes/massageRoutes.js";
  
 const app = express()
 
@@ -15,6 +16,7 @@ mongoose.connect(MONGOURL).then(() => {
 })
 
 app.use("/api/users", userRoutes);
+app.use("/api/mg", massageRoutes);
 
 app.listen(PORT, () => {
     console.log(`App is listning to port  : ${PORT}`);
