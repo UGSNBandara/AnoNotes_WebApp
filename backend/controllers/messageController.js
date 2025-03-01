@@ -3,7 +3,7 @@ import { request, response } from "express";
 
 export const addMessage = async (request, response) => {
     try{
-        const {targetUser, message , nickname, commenterIP } = request.body;
+        const {targetUser, message , nickname} = request.body;
 
         if(!targetUser || !message || !commenterIP ){
             return response.status(400).send({
@@ -11,11 +11,13 @@ export const addMessage = async (request, response) => {
             });
         }
 
+        const IPaddress = request.ip || request.connection.ip;
+
         const newmessage = await massages.create({
             targetUser,
             message,
             nickname,
-            commenterIP,
+            commenterIP:IPaddress,
         })
 
         return response.status(201).send(newmessage);
