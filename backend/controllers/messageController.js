@@ -5,7 +5,7 @@ export const addMessage = async (request, response) => {
     try{
         const {targetUser, message , nickname} = request.body;
 
-        if(!targetUser || !message || !commenterIP ){
+        if(!targetUser || !message){
             return response.status(400).send({
                 message: "Some Required Data has missing",
             });
