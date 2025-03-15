@@ -102,7 +102,7 @@ export const login = async (request, response) => {
       return response.status(400).json({success : false, message: "Username or Password must be Filled" });
     }
 
-    const data = user.findOne({ username });
+    const data = await user.findOne({ username });
 
     if (!data) {
       return response.status(404).json({success : false,  message: "User is not Found" });

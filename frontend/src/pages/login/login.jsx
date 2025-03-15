@@ -1,11 +1,56 @@
-import React from 'react';
+import React, { useState } from 'react';
  import {useNavigate} from 'react-router-dom';
 
 const Login = () => {
+  const [username, setUsername] = useState('');
+  const [password, setPassword] = useState('');
+  const [errorMessage, setErrorMessage] = useState('');
   const navigate = useNavigate();
 
-  const loginClick = () => {
+  const loginClick = async () => {
+    event.preventDefault();
+
+    if(!username && !password){
+      setErrorMessage('Boxes are Empty!');
+      return;
+    }
+    if(!username){
+      setErrorMessage('Username is Empty!');
+      return;
+    }
+    if(!password){
+      setErrorMessage('Password is Empty!');
+      return;
+    }
+
+    const logindata = {
+      username,
+      password,
+    }
+
+    try{
+    const response = await fetch('http://localhost:5555/api/users/login', {
+      method: 'POST',
+      headers: {
+        "Content-Type": "application/json",
+      },
+      body: JSON.stringify(logindata),
+    });
+
+
+    const result = await response.json();
+
+    if(!result.success){
+      setErrorMessage("Wrong userdetails!");
+      return
+    }
+    setUsername('');
+    setPassword('');
     navigate('/home');
+  }
+  catch(err){
+    console.log(err);
+  }
   }
   return (
     <div className="min-h-screen p-4 flex items-center justify-center bg-gradient-to-tr from-fuchsia-500 to-cyan-500">
@@ -19,6 +64,9 @@ const Login = () => {
             <input
               type="text"
               id="username"
+              value={username}
+              name='username'
+              onChange={(e) => setUsername(e.target.value)}
               className="w-full px-4 py-2 mt-2 border rounded-lg focus:outline-none focus:ring-2 focus:ring-blue-500"
               placeholder="Enter your username"
             />
@@ -30,6 +78,9 @@ const Login = () => {
             <input
               type="password"
               id="password"
+              value={password}
+              name='password'
+              onChange={(e) => setPassword(e.target.value)}
               className="w-full px-4 py-2 mt-2 border rounded-lg focus:outline-none focus:ring-2 focus:ring-blue-500"
               placeholder="Enter your password"
             />
@@ -41,6 +92,12 @@ const Login = () => {
             Login
           </button>
         </form>
+
+        {errorMessage && (
+          <div className="flex items-center justify-center mb-4 mt-5 text-red-600 bg-red-100 border border-red-400 rounded p-2">
+            {errorMessage}
+          </div>
+        )}
       </div>
     </div>
   );

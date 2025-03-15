@@ -3,8 +3,10 @@ import { PORT, MONGOURL } from "./config.js";
 import mongoose from "mongoose";
 import userRoutes from "./routes/userRoutes.js";
 import massageRoutes from "./routes/massageRoutes.js";
- 
+ import cors from "cors";
+
 const app = express()
+app.use(cors({ origin: '*' })); 
 
 app.use(express.json());
 
