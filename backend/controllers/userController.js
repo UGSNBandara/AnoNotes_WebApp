@@ -14,7 +14,7 @@ export const addUser = async (request, response) => {
       });
     }
 
-    const hashedPassword = hashPassword(password);
+    const hashedPassword = await hashPassword(password);
 
     const existingUser = await user.findOne({ email });
     if (existingUser) {
@@ -24,7 +24,7 @@ export const addUser = async (request, response) => {
     const newUser = await user.create({
       username,
       email,
-      password: hashPassword,
+      password: hashedPassword,
       massage,
     });
 
@@ -116,5 +116,28 @@ export const login = async (request, response) => {
 
   catch (err) {
     return response.status(500).json({success : true,  message: err.message });
+  }
+}
+
+
+export const getUsermessageAndUsername = async (request, response) => {
+
+  try{
+    const userID = request.params.id;
+    const sUser = await user.findById(userID);
+
+    if (!sUser) {
+      return response.status(404).json({success : false, message: "User ID is wrong"});
+    }
+
+    const details = {
+      username : sUser.username,
+      message : sUser.massage, 
+    }
+
+    return response.status(200).json({success : true, details : details});
+  }
+  catch (err){
+    return response.status(500).json({success : false, message: err.message});
   }
 }

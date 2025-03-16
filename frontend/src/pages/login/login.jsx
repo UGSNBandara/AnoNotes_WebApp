@@ -37,13 +37,16 @@ const Login = () => {
       body: JSON.stringify(logindata),
     });
 
-
     const result = await response.json();
 
     if(!result.success){
       setErrorMessage("Wrong userdetails!");
       return
     }
+
+    sessionStorage.setItem('userID', result.user._id);
+    console.log(result.user._id);
+    
     setUsername('');
     setPassword('');
     navigate('/home');

@@ -1,9 +1,10 @@
 import React, { useState, useEffect } from "react";
 
 const UserHome = () => {
-  const [userLink, setUserLink] = useState("http://localhost:5173/guest/comment");
+  const [userLink, setUserLink] = useState("http://localhost:5173/comment/");
   const [textData, setTextData] = useState([]);
   const [currentTextIndex, setCurrentTextIndex] = useState(0);
+  const [userID, setUserID] = useState('');
 
   useEffect(() => {
     const fetchedData = [
@@ -12,7 +13,20 @@ const UserHome = () => {
       "Text 3: More sample text to simulate data fetching.",
     ];
     setTextData(fetchedData);
+
+    const userid = sessionStorage.getItem('userID');
+    if (userid){
+      setUserID(userid);
+    }   
   }, []);
+
+
+  useEffect(() => {
+    if(userID){
+      setUserLink((prevLink) => `${prevLink}${userID}`);
+    }
+  }, [userID]);
+
 
   const handleNext = () => {
     if (currentTextIndex < textData.length - 1) {

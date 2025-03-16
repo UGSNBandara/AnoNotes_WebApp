@@ -1,12 +1,57 @@
-import React from 'react';
+import React, { useState } from 'react';
 import { useNavigate } from 'react-router-dom';
 
 const Signup = () => {
-
+    const [username, setUsername] = useState('');
+    const [email, setEmail] = useState('');
+    const [password, setPassword] = useState('');
+    const [errorMessage, setErrorMessage] = useState('');
+    const [message] = useState('');
     const navigate = useNavigate();
   
-    const signUpClick = () => {
-      navigate('/home');
+    const signUpClick = async (event) => {
+      event.preventDefault();
+
+      if(!username || !email || !password){
+        setErrorMessage('All Details must be Filled !')
+        return
+      }
+
+      const newuser = {
+        username,
+        email,
+        password,
+      }
+
+      try{
+
+        const response = await fetch('http://localhost:5555/api/users/adduser',{
+          method: 'POST',
+          headers: {
+            "Content-Type": "application/json",
+          },
+          body: JSON.stringify(newuser),
+        })
+
+        const result = await response.json();
+        
+        if(!result.success){
+          setErrorMessage("Signup Failed !")
+          return
+        }
+
+        sessionStorage.setItem('userID', result.user._id);
+        console.log(result.user._id);
+
+        setEmail('');
+        setPassword('');
+        setUsername('');
+               
+        navigate('/home');
+      }
+      catch (err){
+        console.log(err);
+      }
     }
 
   return (
@@ -22,6 +67,9 @@ const Signup = () => {
             <input
               type="text"
               id="username"
+              name='username'
+              value={username}
+              onChange={(e) => setUsername(e.target.value)}
               className="w-full px-4 py-2 mt-2 border rounded-lg focus:outline-none focus:ring-2 focus:ring-blue-500"
               placeholder="Enter your username"
             />
@@ -34,6 +82,9 @@ const Signup = () => {
             <input
               type="email"
               id="email"
+              name='email'
+              value={email}
+              onChange={(e) => setEmail(e.target.value)}
               className="w-full px-4 py-2 mt-2 border rounded-lg focus:outline-none focus:ring-2 focus:ring-blue-500"
               placeholder="Enter your email"
             />
@@ -46,6 +97,9 @@ const Signup = () => {
             <input
               type="password"
               id="password"
+              name='password'
+              value={password}
+              onChange={(e) => setPassword(e.target.value)}
               className="w-full px-4 py-2 mt-2 border rounded-lg focus:outline-none focus:ring-2 focus:ring-blue-500"
               placeholder="Enter your password"
             />
