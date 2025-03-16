@@ -8,6 +8,7 @@ const GuestCommenting = () => {
   const [username, setUsername] = useState("");
   const [message, setMessage] = useState("");
   const [userID, setUserID] = useState("");
+  const [errorMessage, setErrorMessage] = useState("");
 
   const { userID: urlUserID } = useParams();
 
@@ -67,12 +68,48 @@ const GuestCommenting = () => {
 
   const navigate = useNavigate();
 
-  const handleSend = () => {
-    if (comment.trim() !== "") {
-      console.log("Comment sent:", comment);
+  const handleSend = async (event) => {
+    event.preventDefault();
+
+    if (comment.trim() == "") 
+    {
+      setErrorMessage("Message box is Empty !");
+      return;
+    }
+
+    const note = {
+      targetUser : userID,
+      message : comment,
+      nickname,
+    }
+
+    try {
+      const response = await fetch('http://localhost:5555/api/mg/add', {
+        method: 'POST',
+        headers: {
+          "Content-Type" : "application/json",
+        },
+        body: JSON.stringify(note),
+      })
+
+      if(!response){
+        console.log("Response is empty");
+        return;
+      }
+
+      const result = await response.json();
+
+      if(!result.success){
+        console.log(result.message);
+        return;
+      }
+
       setComment("");
-    } else {
-      alert("Please type a comment before sending.");
+      setNickname("");
+      setErrorMessage("");
+    }
+    catch (err){
+      console.log(err);
     }
   };
 

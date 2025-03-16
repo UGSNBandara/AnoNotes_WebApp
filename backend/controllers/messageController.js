@@ -6,8 +6,9 @@ export const addMessage = async (request, response) => {
         const {targetUser, message , nickname} = request.body;
 
         if(!targetUser || !message){
-            return response.status(400).send({
+            return response.status(400).json({
                 message: "Some Required Data has missing",
+                success: false,
             });
         }
 
@@ -20,12 +21,12 @@ export const addMessage = async (request, response) => {
             commenterIP:IPaddress,
         })
 
-        return response.status(201).send(newmessage);
+        return response.status(201).json({ message : newmessage, success: true});
 
     }
     catch(err){
         console.log(err);
-        return response.status(500).send({message: err.message });
+        return response.status(500).json({message: err.message, success:false });
     }
 }
 

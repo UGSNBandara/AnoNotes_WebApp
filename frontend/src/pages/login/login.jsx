@@ -7,7 +7,7 @@ const Login = () => {
   const [errorMessage, setErrorMessage] = useState('');
   const navigate = useNavigate();
 
-  const loginClick = async () => {
+  const loginClick = async (event) => {
     event.preventDefault();
 
     if(!username && !password){
