@@ -50,10 +50,15 @@ export const getMessgesByUser = async (request, response) => {
         const targetUser = request.params.id;
         const messagesByUser = await massages.find({targetUser: targetUser});
         
-        return response.status(200).send(messagesByUser);
+        const comment = messagesByUser.map((msg) => ({
+            comment : msg.message,
+            nickname : msg.nickname,
+        }))
+
+        return response.status(200).json({success : true, comment : comment});
     }
     catch(err){
         console.log(err);
-        return response.status(500).send({message: err.message});
+        return response.status(500).json({success : false, message: err.message});
     }
 }

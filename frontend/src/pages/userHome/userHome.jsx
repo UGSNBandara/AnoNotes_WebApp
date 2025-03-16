@@ -4,29 +4,48 @@ const UserHome = () => {
   const [userLink, setUserLink] = useState("http://localhost:5173/comment/");
   const [textData, setTextData] = useState([]);
   const [currentTextIndex, setCurrentTextIndex] = useState(0);
-  const [userID, setUserID] = useState('');
+  const [userID, setUserID] = useState("");
 
   useEffect(() => {
-    const fetchedData = [
-      "Text 1: Placeholder text from API.",
-      "Text 2: Another piece of text fetched from the API.",
-      "Text 3: More sample text to simulate data fetching.",
-    ];
-    setTextData(fetchedData);
-
-    const userid = sessionStorage.getItem('userID');
-    if (userid){
+    const userid = sessionStorage.getItem("userID");
+    if (userid) {
       setUserID(userid);
-    }   
+    }
   }, []);
 
-
+  
   useEffect(() => {
-    if(userID){
+
+    if (userID) {
       setUserLink((prevLink) => `${prevLink}${userID}`);
     }
-  }, [userID]);
 
+    const fetchComment = async () => {
+      try {
+        const response = await fetch(`http://localhost:5555/api/mg/get/${userID}`);
+
+        if (!response.ok) {
+          console.log("Failed to fetch comments");
+          return;
+        }
+
+        const result = await response.json();
+
+        if (!result.success) {
+          console.log(result.message);
+          return;
+        }
+
+        const comments = result.comment || [];
+        setTextData(comments); // Set directly as an array
+        console.log("Successfully fetched comments:", comments);
+      } catch (err) {
+        console.error("Error fetching comments:", err);
+      }
+    };
+
+    fetchComment();
+  }, [userID]);
 
   const handleNext = () => {
     if (currentTextIndex < textData.length - 1) {
@@ -51,7 +70,7 @@ const UserHome = () => {
     };
 
     return (
-      <div className=" text-center mb-4 h-[7%] p-4 lg:h-[9%] lg:p-5 border rounded-lg shadow-md bg-gray-100 flex items-center justify-between">
+      <div className="text-center mb-4 h-[7%] p-4 lg:h-[9%] lg:p-5 border rounded-lg shadow-md bg-gray-100 flex items-center justify-between">
         <div className="text-sm lg:text-lg font-mono truncate" title={userLink}>
           {userLink}
         </div>
@@ -70,7 +89,19 @@ const UserHome = () => {
       <div className="max-w-4xl mx-auto h-screen p-4">
         <LinkDisplay userLink={userLink} />
         <div className="flex justify-center items-center border h-[70%] p-6 rounded-lg shadow-lg bg-white mb-6 px-4">
-          <p className="font-mono text-xl text-center lg:text-3xl ">{textData[currentTextIndex]}</p>
+          {textData.length > 0 ? (
+            <p className="font-mono text-xl text-center lg:text-3xl">
+              {textData[currentTextIndex]?.comment}
+              <br/> <br/>
+              {textData[currentTextIndex]?.nickname
+                ? ` (${textData[currentTextIndex].nickname})`
+                : ""}
+            </p>
+          ) : (
+            <p className="font-mono text-xl text-center lg:text-3xl text-gray-500">
+              No comments available
+            </p>
+          )}
         </div>
         <div className="flex items-center justify-between mb-4 h-[10%]">
           <button
@@ -83,7 +114,7 @@ const UserHome = () => {
           <button
             onClick={handleNext}
             className="px-4 py-2 font-bold font-mono bg-white text-blue-500 rounded-lg hover:bg-blue-500 hover:text-white disabled:bg-gray-300 h-15 lg:text-xl"
-            disabled={currentTextIndex === textData.length - 1}
+            disabled={currentTextIndex >= textData.length - 1}
           >
             Next
           </button>
