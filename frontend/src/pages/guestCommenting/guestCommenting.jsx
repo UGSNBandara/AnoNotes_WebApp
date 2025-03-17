@@ -77,6 +77,21 @@ const GuestCommenting = () => {
       return;
     }
 
+    const bad_word = await checkBadWords(comment);
+
+    if(bad_word == 1){
+      console.log("Text contain badwords")
+      return;
+    }
+
+    if(bad_word == -1){
+      console.log("Got an error during the chcking");
+    }
+
+    if(bad_word == 0){
+      console.log("misson passed");
+    }
+
     const note = {
       targetUser : userID,
       message : comment,
@@ -112,6 +127,35 @@ const GuestCommenting = () => {
       console.log(err);
     }
   };
+
+  const checkBadWords = async (text) => {
+    try {
+      const response = await fetch('http://127.0.0.1:8000/detect_b_words', {
+        method: "POST",
+        headers: {
+          "Content-Type": "application/json",
+        },
+        body: JSON.stringify({ text: text }),
+      });
+  
+      if (!response.ok) {
+        console.log("Error: Bad response from server while checking bad words");
+        return -1; // Error code
+      }
+  
+      const result = await response.json(); // Parse JSON response
+  
+      if (result.bad_word_contain) {
+        return 1; // Bad words detected
+      } else {
+        return 0; // No bad words
+      }
+    } catch (err) {
+      console.log("Error during bad word checking:", err);
+      return -1; // Error code
+    }
+  };
+  
 
   const handleCreateLink = () => {
     window.open('/', '_blank');

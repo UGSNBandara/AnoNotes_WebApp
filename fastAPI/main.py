@@ -2,11 +2,26 @@ from fastapi import FastAPI, HTTPException
 from pydantic import BaseModel
 import spacy
 import os
+from fastapi.middleware.cors import CORSMiddleware
+
 
 # Initialize SpaCy model
 nlp = spacy.blank("si")
 
 app = FastAPI()
+
+origins = [
+    "http://localhost",
+    "http://localhost:5173",
+]
+
+app.add_middleware(
+    CORSMiddleware,
+    allow_origins=origins,
+    allow_credentials=True,
+    allow_methods=["*"],
+    allow_headers=["*"],
+)
 
 def load_bad_word(filename):
     try:
