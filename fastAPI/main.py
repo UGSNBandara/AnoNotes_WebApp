@@ -1,9 +1,15 @@
 from fastapi import FastAPI, HTTPException
 from pydantic import BaseModel
 import spacy
-import os
 from fastapi.middleware.cors import CORSMiddleware
+import pickle
 
+
+with open("fastAPI\models\singlish_comment_classifier_v1.pkl", "rb") as file:
+    singlish_comment_classifier_v1 = pickle.load(file)
+
+with open("fastAPI\models\sinhala_comment_classifier_v1.pkl", "rb") as file:
+    sinhala_comment_classifier_v1 = pickle.load(file)
 
 # Initialize SpaCy model
 nlp = spacy.blank("si")
@@ -35,6 +41,25 @@ def load_bad_word(filename):
         print(f"Error decoding file {filename}: {e}")
         return set()
 
+def detect_sinhala_english_text(text):
+    
+    english_range = range(0x0041, 0x007B)
+
+    detecting_count = 0
+    
+    for char in text:
+        if char != ' ':
+            if ord(char) in english_range:
+                detecting_count +=1
+            else:
+                detecting_count -=1
+    
+    if(detecting_count<0):
+        return 0 #return 0 if the text is in sinhala
+    elif(detecting_count>=0):
+        return 1 # return 1 if the text is in english 
+                 # if it 0 then also check the english.. Assuming commenter do not enter harmfull massage and harmless massage using separated laungage
+
 Sinhala_Bad_Word = load_bad_word('Data/SinhalaBWords.txt')
 Singlish_Bad_Word = load_bad_word('Data/SinglishBWords.txt')
 
@@ -50,3 +75,4 @@ def detect_b_words(data: TextData):
             return {"bad_word_contain" : True}
     
     return {"bad_word_contain": False}
+
