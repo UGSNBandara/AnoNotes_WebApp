@@ -3,12 +3,13 @@ from pydantic import BaseModel
 import spacy
 from fastapi.middleware.cors import CORSMiddleware
 import pickle
+import sklearn
 
 
-with open("fastAPI\models\singlish_comment_classifier_v1.pkl", "rb") as file:
+with open("models\singlish_comment_classifier_v1.pkl", "rb") as file:
     singlish_comment_classifier_v1 = pickle.load(file)
 
-with open("fastAPI\models\sinhala_comment_classifier_v1.pkl", "rb") as file:
+with open("models\sinhala_comment_classifier_v1.pkl", "rb") as file:
     sinhala_comment_classifier_v1 = pickle.load(file)
 
 # Initialize SpaCy model
@@ -76,3 +77,15 @@ def detect_b_words(data: TextData):
     
     return {"bad_word_contain": False}
 
+@app.post("/check_harm")
+def sinhala_text(data: TextData):
+    
+    text_in = data.text
+    e_or_s = detect_sinhala_english_text(text_in)
+    
+    if(e_or_s==0):
+        prediction = sinhala_comment_classifier_v1.predict([text_in])
+        return {"Prediction" : int(prediction[0]), "L" : "S"}
+    elif(e_or_s==1):
+        prediction = singlish_comment_classifier_v1.predict([text_in])
+        return {"Prediction" : int(prediction[0]), "L" : "E"}
