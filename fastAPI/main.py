@@ -6,11 +6,17 @@ import pickle
 import sklearn
 
 
-with open("models\singlish_comment_classifier_v1.pkl", "rb") as file:
-    singlish_comment_classifier_v1 = pickle.load(file)
+with open("models\singlish_comment_classifier_v3.pkl", "rb") as file:
+    singlish_comment_classifier_v3 = pickle.load(file)
 
 with open("models\sinhala_comment_classifier_v1.pkl", "rb") as file:
     sinhala_comment_classifier_v1 = pickle.load(file)
+
+with open("models\english_comment_classifier_v1.pkl", "rb") as file:
+    english_comment_classifier_v1 = pickle.load(file)
+
+with open("models\english_singlish_classifier_v1.pkl", "rb") as file:
+    english_singlish_classifier_v1 = pickle.load(file)
 
 # Initialize SpaCy model
 nlp = spacy.blank("si")
@@ -85,7 +91,13 @@ def sinhala_text(data: TextData):
     
     if(e_or_s==0):
         prediction = sinhala_comment_classifier_v1.predict([text_in])
-        return {"Prediction" : int(prediction[0]), "L" : "S"}
+        return {"Prediction" : int(prediction[0]), "L" : "Sinhala"}
     elif(e_or_s==1):
-        prediction = singlish_comment_classifier_v1.predict([text_in])
-        return {"Prediction" : int(prediction[0]), "L" : "E"}
+        prediction1 = english_singlish_classifier_v1.predict([text_in])
+        
+        if(prediction1[0] == 0):
+            prediction = singlish_comment_classifier_v3.predict([text_in])
+            return {"Prediction" : int(prediction[0]), "L" : "Singlish"}
+        elif(prediction1[0] ==1):
+            prediction = english_comment_classifier_v1.predict([text_in])
+            return {"Prediction" : int(prediction[0]), "L" : "English"}
