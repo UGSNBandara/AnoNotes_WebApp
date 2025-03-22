@@ -43,7 +43,7 @@ const UserHome = () => {
         console.error("Error fetching comments:", err);
       }
     };
-
+    
     fetchComment();
   }, [userID]);
 
@@ -113,7 +113,7 @@ const UserHome = () => {
           </button>
           <button
             onClick={handleNext}
-            className="px-4 py-2 font-bold font-mono bg-white text-blue-500 rounded-lg hover:bg-blue-500 hover:text-white disabled:bg-gray-300 h-15 lg:text-xl"
+            className="px-8 py-2 font-bold font-mono bg-white text-blue-500 rounded-lg hover:bg-blue-500 hover:text-white disabled:bg-gray-300 h-15 lg:text-xl"
             disabled={currentTextIndex >= textData.length - 1}
           >
             Next
