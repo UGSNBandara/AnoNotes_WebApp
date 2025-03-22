@@ -8,42 +8,64 @@ AnoNotes is a fun and interactive web app where users can create a link, share i
 - 🎨 **Clean Interface**  
 - 🤖 **Text Detection**
 
-# AnoNotes - WebApp
+## 🛠️ **Tech Stack**  
 
-**AnoNotes** is a fun and simple web app where users can create a link, share it with their friends, and receive anonymous messages, funny notes, or feedback. The user can view all the responses received through the shared link.
+- 🗄️ **MongoDB**: NoSQL database for storing messages.  
+- 🚀 **Express.js**: Handles server-side logic and routing.  
+- 💻 **React**: Builds a responsive and intuitive frontend.  
+- 🟢 **Node.js**: Backend runtime environment for smooth functionality.  
+- ⚡ **FastAPI**: Powers the NLP solution for content moderation.  
 
-### Features:
-- Create and share anonymous links.
-- Submit anonymous messages and notes via the link.
-- View all responses received using the link.
-- Simple and clean interface.
-- Text detection to make convenient for users
+<br><br>
 
-### Tech Stack:
-- **MongoDB**: NoSQL database for storing messages.
-- **Express.js**: Web framework for handling routes and server-side logic.
-- **React**: Frontend for building a responsive user interface.
-- **Node.js**: Backend runtime environment.
-- **FastAPI**: NLP API
-# NLP - Integration
+# 🤖 **NLP - Integration** 🤖
 
-Anonymous messages that users send may contain harmful content or bad words, which may affect the receiver's mental health. So I integrate an NLP solution to address this issue. 
+Anonymous messages may sometimes contain harmful content or bad words, which could negatively impact the receiver's mental health. To address this, an **NLP solution** is integrated into the app to ensure a safe and positive experience.  
 
-### For Bad word detecting : 
+---
 
-To detect bad words I defined a list of bad words in Sinhala Singlish, and when users send messages, they check against the list to find any bad words in their texts. If any bad word exists it will show a warning and will now send to the target user
+### ⚠️ **Bad Word Detection**  
+- 🔍 Messages are checked against a **predefined list of bad words** in **Sinhala Singlish**.  
+- 🚨 If a bad word is detected:  
+  - A **warning** is displayed.  
+  - The message is **blocked** from being sent to the recipient.  
 
-### For harmful content :
+---
 
-detecting harmful content in all 3 languages was challenged. I used 4 models to overcome this.
-- 1 : model to detect Singlish harmful texts
-- 2 : model to detect Sinhala harmful texts
-- 3 : model to detect English harmful texts
-- 4 : model to identify English and Sinhala separately
+### ☢️ **Harmful Content Detection**  
+Detecting harmful content across **three languages** (**English, Sinhala, and Singlish**) posed a challenge. Here's how it's tackled:  
 
-dataset:
-- by scraping youtube comments using youtube v3 api
-- by collecting comments via google form
-(If you like to help me to collect data in different accecent to imporove models please fill out this google form : https://forms.gle/HkqrPBjM3J317EWaA )
+- **Models Used:**  
+  1️⃣ Detects harmful content in **Singlish**.  
+  2️⃣ Detects harmful content in **Sinhala**.  
+  3️⃣ Detects harmful content in **English**.  
+  4️⃣ Identifies and differentiates between **English and Sinhala** content.  
 
+---
 
+### 📊 **Dataset Collection**  
+To build robust models, data was gathered using the following methods:  
+- **YouTube Comments**: Scraped using the **YouTube V3 API**.  
+- **Google Form Submissions**: Collected user-submitted comments.  
+
+🌟 **Want to Contribute?**  
+You can help us improve our models by contributing data in different accents and contexts!  
+- 📝 Fill out the form: [📋 Submit Data](https://forms.gle/HkqrPBjM3J317EWaA)  
+
+---
+## 🛡️ **Security and Privacy**  
+
+We take the security and privacy of our users very seriously. Here’s how we ensure a safe and secure experience:  
+
+- 🧠 **NLP for Protection**:  
+  Integrated **NLP models** ensure users are shielded from harmful and offensive content.  
+
+- 🔑 **Encrypted Passwords**:  
+  User passwords are encrypted, ensuring that no one, including administrators, can view them.  
+
+- 🌐 **IP Address Collection**:  
+  To address any **illegal activity** or **higher-level concerns**, we collect the IP address of commenters. This ensures that we can take **legal action** if necessary.  
+
+---
+
+🤝 Contributions are welcome! Feel free to submit issues or create pull requests. Let’s build AnoNotes together!
