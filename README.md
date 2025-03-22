@@ -1,3 +1,13 @@
+# 🌟 AnoNotes - WebApp 🌟  
+AnoNotes is a fun and interactive web app where users can create a link, share it with friends, and receive anonymous messages.  
+
+## ✨ Features  
+- 🔗 **Create and Share Links**  
+- 📝 **Submit Anonymous Messages**  
+- 📖 **View Responses**  
+- 🎨 **Clean Interface**  
+- 🤖 **Text Detection**
+
 # AnoNotes - WebApp
 
 **AnoNotes** is a fun and simple web app where users can create a link, share it with their friends, and receive anonymous messages, funny notes, or feedback. The user can view all the responses received through the shared link.
@@ -7,13 +17,14 @@
 - Submit anonymous messages and notes via the link.
 - View all responses received using the link.
 - Simple and clean interface.
+- Text detection to make convenient for users
 
 ### Tech Stack:
 - **MongoDB**: NoSQL database for storing messages.
 - **Express.js**: Web framework for handling routes and server-side logic.
 - **React**: Frontend for building a responsive user interface.
 - **Node.js**: Backend runtime environment.
-
+- **FastAPI**: NLP API
 # NLP - Integration
 
 Anonymous messages that users send may contain harmful content or bad words, which may affect the receiver's mental health. So I integrate an NLP solution to address this issue. 
@@ -29,4 +40,10 @@ detecting harmful content in all 3 languages was challenged. I used 4 models to 
 - 2 : model to detect Sinhala harmful texts
 - 3 : model to detect English harmful texts
 - 4 : model to identify English and Sinhala separately
--  
+
+dataset:
+- by scraping youtube comments using youtube v3 api
+- by collecting comments via google form
+(If you like to help me to collect data in different accecent to imporove models please fill out this google form : https://forms.gle/HkqrPBjM3J317EWaA )
+
+
