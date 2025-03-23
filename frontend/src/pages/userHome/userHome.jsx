@@ -1,10 +1,14 @@
 import React, { useState, useEffect } from "react";
+import { motion, AnimatePresence } from "framer-motion";
+import { ChevronLeftIcon, ChevronRightIcon, ClipboardIcon, ClipboardDocumentCheckIcon, ArrowPathRoundedSquareIcon, ArrowPathIcon } from '@heroicons/react/24/outline';
+import { AnimatedBackground, pageVariants, buttonVariants, glassCardStyle, glassButtonStyle } from '../../theme.jsx';
 
 const UserHome = () => {
   const [userLink, setUserLink] = useState("http://localhost:5173/comment/");
   const [textData, setTextData] = useState([]);
   const [currentTextIndex, setCurrentTextIndex] = useState(0);
   const [userID, setUserID] = useState("");
+  const [direction, setDirection] = useState(0);
 
   useEffect(() => {
     const userid = sessionStorage.getItem("userID");
@@ -13,9 +17,7 @@ const UserHome = () => {
     }
   }, []);
 
-  
   useEffect(() => {
-
     if (userID) {
       setUserLink((prevLink) => `${prevLink}${userID}`);
     }
@@ -37,7 +39,7 @@ const UserHome = () => {
         }
 
         const comments = result.comment || [];
-        setTextData(comments); // Set directly as an array
+        setTextData(comments);
         console.log("Successfully fetched comments:", comments);
       } catch (err) {
         console.error("Error fetching comments:", err);
@@ -49,13 +51,39 @@ const UserHome = () => {
 
   const handleNext = () => {
     if (currentTextIndex < textData.length - 1) {
+      setDirection(1);
       setCurrentTextIndex(currentTextIndex + 1);
     }
   };
 
   const handlePrev = () => {
     if (currentTextIndex > 0) {
+      setDirection(-1);
       setCurrentTextIndex(currentTextIndex - 1);
+    }
+  };
+
+  const handleRefresh = async () => {
+    try {
+      const response = await fetch(`http://localhost:5555/api/mg/get/${userID}`);
+
+      if (!response.ok) {
+        console.log("Failed to fetch comments");
+        return;
+      }
+
+      const result = await response.json();
+
+      if (!result.success) {
+        console.log(result.message);
+        return;
+      }
+
+      const comments = result.comment || [];
+      setTextData(comments);
+      console.log("Successfully refreshed comments:", comments);
+    } catch (err) {
+      console.error("Error refreshing comments:", err);
     }
   };
 
@@ -70,60 +98,141 @@ const UserHome = () => {
     };
 
     return (
-      <div className="text-center mb-4 h-[7%] p-4 lg:h-[9%] lg:p-5 border rounded-lg shadow-md bg-gray-100 flex items-center justify-between">
-        <div className="text-sm lg:text-lg font-mono truncate" title={userLink}>
+      <motion.div 
+        className={`${glassCardStyle} p-4 flex items-center justify-between gap-4`}
+        initial={{ opacity: 0, y: -20 }}
+        animate={{ opacity: 1, y: 0 }}
+        transition={{ delay: 0.2 }}
+      >
+        <div className="text-sm lg:text-lg font-mono truncate flex-1" title={userLink}>
           {userLink}
         </div>
-        <button
+        <motion.button
           onClick={handleCopy}
-          className="font-mono ml-4 px-3 py-2 bg-blue-500 text-white text-sm lg:text-base font-semibold rounded hover:bg-blue-600 focus:outline-none"
+          className={`${glassButtonStyle} flex items-center gap-2`}
+          variants={buttonVariants}
+          whileHover="hover"
+          whileTap="tap"
         >
-          {copied ? "Copied!" : "Copy"}
-        </button>
-      </div>
+          {copied ? (
+            <>
+              <ClipboardDocumentCheckIcon className="w-5 h-5" />
+              <span>Copied!</span>
+            </>
+          ) : (
+            <>
+              <ClipboardIcon className="w-5 h-5" />
+              <span>Copy</span>
+            </>
+          )}
+        </motion.button>
+      </motion.div>
     );
   };
 
   return (
-    <div className="bg-gradient-to-tr from-fuchsia-500 to-cyan-500">
-      <div className="max-w-4xl mx-auto h-screen p-4">
-        <LinkDisplay userLink={userLink} />
-        <div className="flex justify-center items-center border h-[70%] p-6 rounded-lg shadow-lg bg-white mb-6 px-4">
-          {textData.length > 0 ? (
-            <p className="font-mono text-xl text-center lg:text-3xl">
-              {textData[currentTextIndex]?.comment}
-              <br/> <br/>
-              {textData[currentTextIndex]?.nickname
-                ? ` (${textData[currentTextIndex].nickname})`
-                : ""}
-            </p>
-          ) : (
-            <p className="font-mono text-xl text-center lg:text-3xl text-gray-500">
-              No comments available
-            </p>
-          )}
+    <motion.div 
+      className="min-h-screen bg-gradient-to-br from-indigo-500 via-purple-500 to-pink-500 relative overflow-hidden"
+      variants={pageVariants}
+      initial="initial"
+      animate="animate"
+      exit="exit"
+    >
+      <AnimatedBackground />
+      
+      <div className="max-w-4xl mx-auto min-h-screen p-4 sm:p-6 relative z-10">
+        <div className="mb-6 sm:mb-8">
+          <LinkDisplay userLink={userLink} />
         </div>
-        <div className="flex items-center justify-between mb-4 h-[10%]">
-          <button
+        
+        <motion.div 
+          className={`${glassCardStyle} min-h-[60vh] sm:min-h-[70vh] p-4 sm:p-8 flex justify-center items-center relative overflow-hidden shadow-xl`}
+          initial={{ opacity: 0, y: 20 }}
+          animate={{ opacity: 1, y: 0 }}
+          transition={{ delay: 0.3 }}
+        >
+          <AnimatePresence mode="wait" custom={direction}>
+            <motion.div
+              key={currentTextIndex}
+              custom={direction}
+              initial={{ opacity: 0, x: direction > 0 ? 100 : -100 }}
+              animate={{ opacity: 1, x: 0 }}
+              exit={{ opacity: 0, x: direction > 0 ? -100 : 100 }}
+              transition={{ duration: 0.3 }}
+              className="text-center px-4"
+            >
+              {textData.length > 0 ? (
+                <>
+                  <p className="text-lg sm:text-xl lg:text-3xl text-white mb-4 leading-relaxed font-medium drop-shadow-lg">
+                    {textData[currentTextIndex]?.comment}
+                  </p>
+                  {textData[currentTextIndex]?.nickname && (
+                    <p className="text-base sm:text-lg lg:text-xl text-white/90 font-medium">
+                      — {textData[currentTextIndex].nickname}
+                    </p>
+                  )}
+                </>
+              ) : (
+                <p className="text-lg sm:text-xl lg:text-3xl text-white/90 font-medium drop-shadow-lg">
+                  No comments available
+                </p>
+              )}
+            </motion.div>
+          </AnimatePresence>
+        </motion.div>
+
+        <motion.div 
+          className="flex items-center justify-between gap-4 mt-6 sm:mt-8 max-w-4xl mx-auto px-4 sm:px-6"
+          initial={{ opacity: 0, y: 20 }}
+          animate={{ opacity: 1, y: 0 }}
+          transition={{ delay: 0.4 }}
+        >
+          <motion.button
             onClick={handlePrev}
-            className="px-4 py-2 font-bold font-mono bg-white text-blue-500 rounded-lg hover:bg-blue-500 hover:text-white disabled:bg-gray-300 h-15 lg:text-xl"
+            className={`${glassButtonStyle} flex items-center gap-2 text-sm sm:text-base bg-white/25 hover:bg-white/35 font-semibold px-3.5 py-1.5`}
+            variants={buttonVariants}
+            whileHover="hover"
+            whileTap="tap"
             disabled={currentTextIndex === 0}
           >
-            Previous
-          </button>
-          <button
+            <ChevronLeftIcon className="w-5 h-5" />
+            <span>Prev</span>
+          </motion.button>
+
+          <motion.button
+            onClick={handleRefresh}
+            className={`${glassButtonStyle} flex items-center gap-2 text-sm sm:text-base bg-white/25 hover:bg-white/35 font-semibold px-3.5 py-1.5`}
+            variants={buttonVariants}
+            whileHover="hover"
+            whileTap="tap"
+          >
+            <ArrowPathIcon className="w-5 h-5" />
+            <span>Refresh</span>
+          </motion.button>
+
+          <motion.button
             onClick={handleNext}
-            className="px-8 py-2 font-bold font-mono bg-white text-blue-500 rounded-lg hover:bg-blue-500 hover:text-white disabled:bg-gray-300 h-15 lg:text-xl"
+            className={`${glassButtonStyle} flex items-center gap-2 text-sm sm:text-base bg-white/25 hover:bg-white/35 font-semibold px-3.5 py-1.5`}
+            variants={buttonVariants}
+            whileHover="hover"
+            whileTap="tap"
             disabled={currentTextIndex >= textData.length - 1}
           >
-            Next
-          </button>
-        </div>
-        <div className="text-center font-mono text-sm text-white lg:text-xl">
-          <p>Instructions: Use the buttons to navigate between the texts.</p>
-        </div>
+            <span>Next</span>
+            <ChevronRightIcon className="w-5 h-5" />
+          </motion.button>
+        </motion.div>
+
+        <motion.p 
+          className="text-center text-white/90 mt-6 text-sm sm:text-base font-medium"
+          initial={{ opacity: 0 }}
+          animate={{ opacity: 1 }}
+          transition={{ delay: 0.5 }}
+        >
+          Use the buttons to navigate between the messages
+        </motion.p>
       </div>
-    </div>
+    </motion.div>
   );
 };
 

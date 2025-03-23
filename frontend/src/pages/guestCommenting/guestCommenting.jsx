@@ -1,5 +1,8 @@
 import React, { useState, useEffect } from "react";
 import { useNavigate, useParams } from "react-router-dom";
+import { motion, AnimatePresence } from "framer-motion";
+import { PaperAirplaneIcon, UserIcon, ExclamationTriangleIcon } from '@heroicons/react/24/outline';
+import { AnimatedBackground, pageVariants, inputVariants, buttonVariants, glassCardStyle, glassInputStyle, glassButtonStyle, errorStyle } from '../../theme.jsx';
 
 const GuestCommenting = () => {
   const [initialText, setInitialText] = useState("Welcome to the Ano commenting!"); // Placeholder text
@@ -59,13 +62,12 @@ const GuestCommenting = () => {
 
 
   useEffect(() => {
-
     console.log(message);
     if (message != "No massage provided") {
       setInitialText(`${username} : ${message}`);
     }
     else {
-      setInitialText(`${username} : Hello Tell something about me !`);
+      setInitialText(`${username} : Tell me what you think about me!`);
     }
   }, [message]);
 
@@ -209,58 +211,135 @@ const GuestCommenting = () => {
   };
 
   return (
-    <div className="min-h-screen bg-gradient-to-tr from-fuchsia-500 to-cyan-500 flex justify-center items-center">
-      <div className="max-w-3xl w-full p-6 space-y-10 bg-white bg-opacity-50 rounded-lg shadow-lg">
-        <div className="p-4 bg-gray-100 border rounded-lg shadow-md w-full mb-8">
-          <p className="text-lg font-semibold text-center">{initialText}</p>
-        </div>
+    <motion.div 
+      className="min-h-screen bg-gradient-to-br from-indigo-500 via-purple-500 to-pink-500 relative overflow-hidden flex items-center justify-center"
+      variants={pageVariants}
+      initial="initial"
+      animate="animate"
+      exit="exit"
+    >
+      <AnimatedBackground />
+      
+      <div className="max-w-3xl w-full mx-auto p-4 sm:p-6 relative z-10 flex flex-col min-h-[80vh]">
+        {/* User Message Section - Top */}
+        <motion.div 
+          className={`${glassCardStyle} p-4 sm:p-6 text-center bg-white/25 mb-8 sm:mb-12 shadow-xl`}
+          initial={{ opacity: 0, y: -20 }}
+          animate={{ opacity: 1, y: 0 }}
+          transition={{ delay: 0.3 }}
+        >
+          <p className="text-lg sm:text-xl font-bold text-white drop-shadow-lg">{initialText}</p>
+        </motion.div>
 
-        <div className="flex flex-col items-center border rounded-lg p-2 bg-white shadow-md w-full space-y-4">
-          <textarea
-            value={comment}
-            onChange={(e) => setComment(e.target.value)}
-            placeholder="Type your comment here..."
-            className="w-full px-4 py-2 border rounded focus:outline-none h-40 resize-none"
-          />
-          <textarea
-            value={nickname}
-            onChange={(e) => setNickname(e.target.value)}
-            placeholder="Your Nickname (optional)"
-            className="w-full px-4 py-2 border rounded focus:outline-none h-12 resize-none"
-          />
-          <button
-            onClick={handleSend}
-            className="mt-2 px-4 py-2 bg-blue-500 text-white font-semibold rounded hover:bg-blue-600 focus:outline-none"
-          >
-            Send
-          </button>
-        </div>
+        {/* Main Content Section - Center */}
+        <motion.div 
+          className={`${glassCardStyle} p-4 sm:p-8 flex-1 flex flex-col justify-center mb-8 sm:mb-12 shadow-xl`}
+          initial={{ opacity: 0, y: 20 }}
+          animate={{ opacity: 1, y: 0 }}
+          transition={{ delay: 0.2 }}
+        >
+          <div className="space-y-4 sm:space-y-6">
+            <div className="relative">
+              <motion.textarea
+                value={comment}
+                onChange={(e) => setComment(e.target.value)}
+                placeholder="Type your comment here..."
+                className={`${glassInputStyle} h-32 sm:h-40 resize-none text-base sm:text-lg bg-white/15 font-medium`}
+                variants={inputVariants}
+                whileFocus="focus"
+                whileTap="tap"
+              />
+            </div>
 
-        <div className="text-center">
-          <button
+            <div className="relative">
+              <UserIcon className="absolute left-3 top-1/2 transform -translate-y-1/2 w-5 h-5 text-white/70" />
+              <motion.textarea
+                value={nickname}
+                onChange={(e) => setNickname(e.target.value)}
+                placeholder="Your Nickname (optional)"
+                className={`${glassInputStyle} h-12 pl-10 resize-none text-base bg-white/15 font-medium [&::-webkit-resizer]:hidden [&::-webkit-scrollbar]:hidden`}
+                variants={inputVariants}
+                whileFocus="focus"
+                whileTap="tap"
+              />
+            </div>
+
+            <motion.button
+              onClick={handleSend}
+              className={`${glassButtonStyle} w-full flex items-center justify-center gap-2 text-base sm:text-lg bg-white/25 hover:bg-white/35 font-semibold`}
+              variants={buttonVariants}
+              whileHover="hover"
+              whileTap="tap"
+            >
+              <PaperAirplaneIcon className="w-5 h-5" />
+              <span>Send Message</span>
+            </motion.button>
+          </div>
+        </motion.div>
+
+        {/* Create Link Section - Bottom */}
+        <motion.div 
+          className="mt-auto"
+          initial={{ opacity: 0 }}
+          animate={{ opacity: 1 }}
+          transition={{ delay: 0.5 }}
+        >
+          <motion.button
             onClick={handleCreateLink}
-            className="px-4 py-2 bg-blue-500 text-white font-semibold rounded hover:bg-green-600 focus:outline-none"
+            className={`${glassButtonStyle} w-full flex items-center justify-center gap-2 text-base sm:text-lg bg-white/25 hover:bg-white/35 font-semibold`}
+            variants={buttonVariants}
+            whileHover="hover"
+            whileTap="tap"
           >
-            Create a Link for Me
-          </button>
-        </div>
+            <span>Create a Link for Me</span>
+          </motion.button>
+        </motion.div>
+
+        {errorMessage && (
+          <motion.div 
+            className={`${errorStyle} mt-4 sm:mt-6 flex items-center justify-center text-sm sm:text-base font-semibold`}
+            initial={{ opacity: 0, y: 10 }}
+            animate={{ opacity: 1, y: 0 }}
+            transition={{ delay: 0.6 }}
+          >
+            {errorMessage}
+          </motion.div>
+        )}
       </div>
 
-      {showWarning && (
-        <div className="fixed inset-0 bg-black bg-opacity-55 flex justify-center items-center">
-          <div className="bg-white p-6 m-4 rounded-lg shadow-lg text-center">
-            <h2 className="text-xl font-bold text-red-500 mb-4">Warning !</h2>
-            <p className="mb-4">{warningMessage}</p>
-            <button
-              onClick={okClick}
-              className="px-10 py-2 bg-blue-500 text-white rounded-lg shadow hover:bg-blue-600"
+      <AnimatePresence>
+        {showWarning && (
+          <motion.div 
+            className="fixed inset-0 bg-black/50 backdrop-blur-sm flex justify-center items-center z-50 p-4"
+            initial={{ opacity: 0 }}
+            animate={{ opacity: 1 }}
+            exit={{ opacity: 0 }}
+          >
+            <motion.div 
+              className={`${glassCardStyle} p-4 sm:p-6 max-w-md w-full mx-4 bg-white/25 shadow-xl`}
+              initial={{ scale: 0.9, opacity: 0 }}
+              animate={{ scale: 1, opacity: 1 }}
+              exit={{ scale: 0.9, opacity: 0 }}
             >
-              OK
-            </button>
-          </div>
-        </div>
-      )}
-    </div>
+              <div className="flex items-center gap-3 mb-4">
+                <ExclamationTriangleIcon className="w-6 h-6 text-yellow-400" />
+                <h3 className="text-lg sm:text-xl font-bold text-white drop-shadow-lg">Warning</h3>
+              </div>
+              <p className="text-white/95 mb-6 text-sm sm:text-base font-medium">{warningMessage}</p>
+              <motion.button
+                onClick={okClick}
+                className={`${glassButtonStyle} w-full text-base sm:text-lg bg-white/25 hover:bg-white/35 font-semibold`}
+                variants={buttonVariants}
+                whileHover="hover"
+                whileTap="tap"
+              >
+                OK
+              </motion.button>
+            </motion.div>
+          </motion.div>
+        )}
+      </AnimatePresence>
+    </motion.div>
   );
 }
 
