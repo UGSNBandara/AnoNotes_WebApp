@@ -189,7 +189,7 @@ const UserHome = () => {
         >
           <motion.button
             onClick={handlePrev}
-            className={`${glassButtonStyle} flex items-center gap-2 text-sm sm:text-base bg-white/25 hover:bg-white/35 font-semibold px-3.5 py-1.5`}
+            className={`${glassButtonStyle} flex items-center gap-2 text-sm sm:text-base bg-white/25 hover:bg-white/35 font-semibold px-3 py-1.5`}
             variants={buttonVariants}
             whileHover="hover"
             whileTap="tap"
@@ -212,7 +212,7 @@ const UserHome = () => {
 
           <motion.button
             onClick={handleNext}
-            className={`${glassButtonStyle} flex items-center gap-2 text-sm sm:text-base bg-white/25 hover:bg-white/35 font-semibold px-3.5 py-1.5`}
+            className={`${glassButtonStyle} flex items-center gap-2 text-sm sm:text-base bg-white/25 hover:bg-white/35 font-semibold px-3 py-1.5`}
             variants={buttonVariants}
             whileHover="hover"
             whileTap="tap"
